@@ -1,16 +1,26 @@
 
 const fs = require('fs')
+
 const docx = require('./lib/docx.js')
+const xlsx = require('./lib/xlsx.js')
+const key  = require('./lib/key.js')
 
-const path = process.argv[2]
-const sections = process.argv.slice(3).map(x => x.split('.').filter(x => x).map(k => parseInt(k, 10)))
+const args = process.argv.slice(2)
 
-console.log('saving sections', sections.map(s => s.join('.')))
+const xs = args.filter(arg => arg.endsWith('.xlsx'))
+               .map(path => xlsx.from(fs.createReadStream(path)).then(table => ({table, path})))
 
-docx.from(fs.createReadStream(path))
-    .then(doc => {
-        sections.reduce((doc, section) => doc.mark(section), doc)
-          .select()
-          .save()
-          .pipe(fs.createWriteStream(path + '.mod.docx'))
-    })
+const ws = args.filter(arg => arg.endsWith('.docx'))
+               .map(path => docx.from(fs.createReadStream(path)).then(doc => ({doc, path})))
+
+const keys = args.filter(arg => key.test(arg)).map(key.parse)
+
+Promise.all([Promise.all(xs), Promise.all(ws)]).then(([tables, docs]) => {
+  const sections = [...tables.flatMap(({table}) => table.keys()), ...keys]
+  docs.forEach(({doc, path}) => {
+    sections.reduce((doc, section) => doc.mark(section), doc)
+            .select()
+            .save()
+            .pipe(fs.createWriteStream(path + '.selection.docx'))
+  })
+})
