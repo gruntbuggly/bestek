@@ -24,5 +24,5 @@ Nieuwe files komen naast de oude als `oude-file.selection.docx`.
 
 Gebruik voorwaartse slashes `/` in bestandsnamen. De volgorde van de word- en excelbestanden speelt geen rol. Voeg optioneel cijfers toe om extra blokken te selecteren in de nieuwe file
 ```
-node main.js examples/...   4.20   7  3.14
+node main.js examples/...   4.20  69  3.14.15
 ```
