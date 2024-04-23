@@ -129,7 +129,7 @@ function toggleSection ($li) {
 
 function getOutput (name) {
   App.bestek.output(name).then(blob => {
-    return
+    //return
 
     const url = URL.createObjectURL(blob)
     const anchor = document.createElement('a')
