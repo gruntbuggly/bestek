@@ -3,7 +3,7 @@ name: 01 - Deploy to GitHub Pages
 on:
   push:
     branches:
-      - bestek
+      - main
 
   workflow_dispatch:
 
