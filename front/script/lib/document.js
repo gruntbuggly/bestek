@@ -13,6 +13,7 @@ function document (file, doc, dom, max=DEFAULT_MAX) {
   this.doc = doc
   this.dom = dom
   this.max = max
+  this.meta = new WeakMap ()
   this.xpath = new xpath ()
 }
 
@@ -42,8 +43,10 @@ document.prototype.sections = function () {
     const title = this.text(node)
 
     const path = Key.parse(title)
-    if (path)
+    if (path) {
       T.add(path, node)
+      this.meta.set(node, { path, mark: 0 })
+    }
   }
 
   return T
@@ -63,45 +66,20 @@ document.prototype.text = function (node) {
   return [...this.xpath.search(`./w:r/w:t`, node)].map(n => n.firstChild.nodeValue).join(' ')
 }
 
-document.prototype.remove = function (path) {
-  const sections = this.sections()
-
-  const E0 = sections.get(path instanceof Array ? path : [path])
-
-  this.removeSection(E0)
-
-  return this
-}
-
-document.prototype.removeSection = function (E0) {
-  const E1 = E0.next
-
-  const el0 = E0.value
-  const el1 = E1 ? E1.value : null
-
-  const P = el0.parentNode
-
-  let el = el0
-  do {
-    const next = el.nextSibling
-    P.removeChild(el)
-    el = next
-  } while (el && el !== el1)
-
-}
-
-// mark 0 = unmarked (default)
+// mark 0 = unmarked
 // mark 1 = passed
 // mark 2 = selected
 document.prototype.mark = function (path) {
-  this._marks = (this._marks || new WeakMap ())
+  const Meta = this.meta
 
   this.sections()
       .walk(path, (tree, _path) => {
-        const m = path.length == _path.length ? 2 : 1
-        const n = this._marks.get(tree) || 0
+        const node = tree.value
+        const meta = Meta.get(node)
+        const m = path.length === _path.length ? 2 : 1
+        const n = meta.mark
         const M = Math.max(m,n)
-        this._marks.set(tree, M)
+        meta.mark = M
 
         if (M === 2) {
           console.log('marked', _path)
@@ -115,40 +93,31 @@ document.prototype.mark = function (path) {
   return this
 }
 
-// mark 0 = unmarked (default)
+// mark 0 = unmarked
 // mark 1 = passed
 // mark 2 = selected
+
+// action 0 = remove
+// action 1 = save
 document.prototype.select = function () {
-  const marks = this._marks = (this._marks || new WeakMap ())
+  const Meta  = this.meta
+  const body  = this.xpath('/w:document/w:body', this.dom)
+  const state = {node: body.firstChild, action: 1}
+  while (state.node) {
+    const node = state.node
+    state.node = node.nextSibling
 
-  const queue = [{path: [], current: this.sections()}]
+    let meta = Meta.get(node)
+    if (meta)
+      state.action = Math.min(meta.mark, 1)
 
-  while (queue.length > 0) {
-    const {path, current} = queue.shift()
-
-    current.forEachChild(tree => {
-      const M = marks.get(tree) || 0
-      switch (M) {
-        case 0:
-          console.log('remove', [...path, tree.key].join('.'))
-          tree.value && this.removeSection(tree)
-          tree.unlink()
-          break;
-        case 1:
-          queue.push({path: [...path, tree.key], current: tree})
-          break
-        case 2:
-        default:
-          break
-      }
-    })
-
-    //if (current.length === 0)
-    // current.unlink()
+    if (state.action === 0) {
+      if (meta) console.log('remove', meta.path.join('.'))
+      body.removeChild(node)
+    }
   }
 
   return this
-
 }
 
 document.prototype.save = function () {

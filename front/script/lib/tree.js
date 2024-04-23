@@ -1,28 +1,13 @@
 export default tree
 
-function tree (parent, key, value) {
-  this.parent = parent
+function tree (key, value) {
   this.key    = key
   this.value  = value
-  this.keys   = []
   this.levels = {}
-  this.nonint = 0
-
-  if (parent) {
-    parent.levels[key] = this
-    if (typeof key !== 'number')
-      ++this.parent.nonint
-    this.parent.keys.push(key)
-    this.parent.keys.sort(this.parent.nonint === 0 ? nsort : undefined)
-  }
-}
-
-function nsort (a,b) {
-  return a - b
 }
 
 tree.prototype.add = function (path, value) {
-  const t = path.reduce((t, key) => t.levels[key] || new tree (t, key), this)
+  const t = path.reduce((t, key) => t.levels[key] || (t.levels[key] = new tree (key)), this)
   t.value = value
 
   return this
@@ -43,35 +28,8 @@ tree.prototype.get = function (path) {
     return current
 }
 
-Object.defineProperty(tree.prototype, 'next', { get () {
-  if (!this.parent) return undefined
-
-  const keys   = this.parent.keys
-  const levels = this.parent.levels
-
-  const i = keys.findIndex(key => key == this.key)
-  const key = keys[i+1]
-  return levels[key]
-}})
-
-Object.defineProperty(tree.prototype, 'length', { get () {
-  return this.keys.length
-}})
-
-tree.prototype.unlink = function () {
-  if (this.parent) {
-    const i = this.parent.keys.indexOf(this.key)
-    this.parent.keys.splice(i, 1)
-    delete this.parent.levels[this.key]
-    if (typeof this.key !== 'number')
-      --this.parent.nonint
-  }
-
-  return this
-} 
-
 tree.prototype.forEachChild = function (f) {
-  return [...this.keys].forEach(key => f(this.levels[key]))
+  return Object.values(this.levels).forEach(child => f(child))
 }
 
 tree.prototype.walk = function (path, f) {
@@ -83,7 +41,7 @@ tree.prototype.walk = function (path, f) {
     const p = path[i]
     current = current.levels[p]
     if (current) {
-      _path.push(current.key)
+      _path = [..._path, current.key]
       cont = f(current, _path)
     }
     else
@@ -95,13 +53,13 @@ tree.prototype.walk = function (path, f) {
 }
 
 tree.prototype.traverse = function (f) {
-  this._traverse(f, [], this)
+  traverse(this, f, [], this)
 }
 
-tree.prototype._traverse = function (f, path, root) {
-  this.forEachChild(child => { 
+function traverse (tree, f, path, root) {
+  tree.forEachChild(child => { 
     const path2 = [...path, child.key]
     f(child.value, path2, root)
-    child._traverse(f, path2, root)
+    traverse(child, f, path2, root)
   })
 }
