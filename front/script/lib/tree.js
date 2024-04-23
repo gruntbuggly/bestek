@@ -41,25 +41,31 @@ tree.prototype.walk = function (path, f) {
     const p = path[i]
     current = current.levels[p]
     if (current) {
+      ++i
       _path = [..._path, current.key]
       cont = f(current, _path)
     }
     else
-      cont = current
-    ++i
+      break
   }
 
   return this
 }
 
-tree.prototype.traverse = function (f) {
-  traverse(this, f, [], this)
-}
-
 function traverse (tree, f, path, root) {
   tree.forEachChild(child => { 
     const path2 = [...path, child.key]
-    f(child.value, path2, root)
+    f(child, path2, root)
     traverse(child, f, path2, root)
   })
+}
+
+tree.prototype.traverse = function (f) {
+  traverse(this, (tree, path) => f(tree.value, path), [], this)
+}
+
+tree.prototype.leafs = function () {
+  const ls = []
+  traverse(this, (tree, path) => Object.keys(tree.levels).length === 0 ? ls.push({tree, path}) : 0, [], this)
+  return ls
 }

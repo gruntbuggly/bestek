@@ -77,7 +77,7 @@ bestek.prototype.toggle = function (section) {
 bestek.prototype.output = function (name) {
   return this.queue(() => {
     const toggles  = [...this.toggles].map(Key.parse)
-    const sections = [...toggles, ...this.sheets.flatMap(sheet => sheet.keys())]
+    const sections = [...toggles, ...this.sheets.flatMap(sheet => sheet.selection())]
     const doc = this.documents.find(doc => doc.name() === name)
     console.log('output', name)
     sections.forEach(section => doc.mark(section))

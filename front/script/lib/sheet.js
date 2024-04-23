@@ -1,6 +1,8 @@
 
 import Key from './key.js'
 
+import tree from './tree.js'
+
 export default sheet
 
 function sheet (file,records) {
@@ -21,4 +23,15 @@ sheet.prototype.keys = function () {
 
 sheet.prototype.name = function () {
   return this.file.name
+}
+
+
+sheet.prototype.selection = function () {
+  if (this.list) return this.list
+  const t = new tree ()
+  for (const key of this.keys())
+    t.add(key)
+
+  this.list = t.leafs().map(({path}) => path)
+  return this.list
 }

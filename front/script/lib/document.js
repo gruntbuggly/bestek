@@ -81,13 +81,7 @@ document.prototype.mark = function (path) {
         const M = Math.max(m,n)
         meta.mark = M
 
-        if (M === 2) {
-          console.log('marked', _path)
-          return false
-        }
-        else {
-          return true
-        }
+        return M !== 2
       })
 
   return this
@@ -101,7 +95,7 @@ document.prototype.mark = function (path) {
 // action 1 = save
 document.prototype.select = function () {
   const Meta  = this.meta
-  const body  = this.xpath('/w:document/w:body', this.dom)
+  const body  = this.xpath.search1('/w:document/w:body', this.dom)
   const state = {node: body.firstChild, action: 1}
   while (state.node) {
     const node = state.node

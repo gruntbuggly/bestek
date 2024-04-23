@@ -13,6 +13,11 @@ xpath.prototype.search = function * (query, node, type) {
     yield current
 }
 
+xpath.prototype.search1 = function (...xs) {
+  for (const x of this.search(...xs))
+    return x
+}
+
 xpath.prototype.searchMany = function * (query, nodes, resultType) {
   for (const node of nodes)
     yield * this.search(query, node, resultType)
