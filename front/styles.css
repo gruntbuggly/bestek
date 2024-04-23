@@ -1,0 +1,198 @@
+html, body {
+  margin: 0;
+}
+
+main {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.column {
+  flex: 1;
+  min-height: calc(100vh - 2em);
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin: 1em 0em;
+  padding: 0 1em;
+  box-sizing: border-box;
+}
+
+.column :first-child {
+  margin-top: 0;
+}
+
+.column :last-child {
+  margin-bottom: 0;
+}
+
+#col-sections {
+  flex: 1.8;
+  border: 1px solid #ccc;
+  border-top: 0;
+  border-bottom: 0;
+}
+
+#drop-area {
+  box-sizing: border-box;
+  border: 2px dashed #ccc;
+  border-radius: 20px;
+  padding: 1em;
+  height: 15em;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#drop-area {
+  cursor: pointer;
+}
+
+#drop-area:hover {
+  background-color: #f8f8f8;
+}
+
+.column ul {
+  padding: 0;
+  list-style: none;
+  width: 100%;
+}
+
+.column li {
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.column li.section-1 {
+  padding-left: 0;
+  font-weight: bold;
+  margin-top: 1em;
+}
+
+.column li.section-1:first-child {
+  margin-top: 0;
+}
+
+.column li.section-2 {
+  padding-left: 0.3em;
+  font-weight: normal;
+}
+
+.column li.section-3 {
+  padding-left: 1em;
+  font-weight: normal;
+}
+
+.column li.section-4 {
+  padding-left: 1.3em;
+  font-weight: normal;
+  font-style: italic;
+}
+
+.column li.section-5 {
+  padding-left: 1.8em;
+  font-weight: normal;
+  font-style: italic;
+}
+
+.hint {
+  font-style: italic;
+  color: #ccc;
+}
+
+ul + .hint {
+  display: none;
+}
+
+ul.empty + .hint {
+  display: initial;
+}
+
+#drop-area .hint {
+  text-align: center;
+  vertical-align: middle;
+  size: 80%;
+}
+
+#col-input ul {
+  list-style: none;
+}
+
+#col-input ul.empty {
+  display: none;
+}
+
+#col-input ul::before {
+  display: block;
+  width: 100%;
+  text-transform: capitalize;
+  color: #444;
+  font-size: 80%;
+  font-weight: bold;
+}
+
+ul#documents::before {
+  content: 'documents'
+}
+
+ul#sheets::before {
+  content: 'sheets'
+}
+
+ul#unknowns::before {
+  content: 'unknown';
+  font-style: italic;
+}
+
+#unknows li {
+  font-style: italic;
+}
+
+#col-input li {
+  padding-left: 1em;
+}
+
+#sections li {
+  cursor: pointer;
+}
+
+li.selected {
+  background-color: rgb(229, 229, 229);
+}
+
+li.selected:first-of-type {
+  border-top-left-radius: 0.2em;
+  border-top-right-radius: 0.2em;
+}
+
+li:not(.selected) + li.selected {
+  border-top-left-radius: 0.2em;
+  border-top-right-radius: 0.2em;
+}
+
+li.selected:has(+ li:not(.selected)) {
+  border-bottom-left-radius: 0.2em;
+  border-bottom-right-radius: 0.2em;
+}
+
+li.selected:last-of-type {
+  border-bottom-left-radius: 0.2em;
+  border-bottom-right-radius: 0.2em;
+}
+
+#col-output li {
+  cursor: pointer;
+}
+
+a.download {
+  display: none;
+}
+
+#sections, #sections li {
+  user-select: none;
+}

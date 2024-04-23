@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@transcend-io/conflux": "^4.1.0",
+    "read-excel-file": "^5.7.1"
+  }
+}

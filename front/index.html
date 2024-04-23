@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bestek Filter</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <div class="column" id="col-input">
+      <h3 class="drop-text">Input</h3>
+      <div id="drop-area">
+        <p class="hint">Add word/excel files here</p>
+        <input type="file" id="fileElem" multiple style="display:none">
+      </div>
+      <ul id="documents" class="empty"></ul>
+      <ul id="sheets"    class="empty"></ul>
+      <ul id="unknowns"  class="empty"></ul>
+    </div>
+    <div class="column" id="col-sections">
+      <h3>Sections</h3>
+      <ul id="sections"></ul>
+    </div>
+    <div class="column" id="col-output">
+      <h3>Output</h3>
+      <ul id="outputs" class="empty"></ul>
+      <p class="hint">Add at least 1 word, and 1 excel file or select sections</p>
+    </div>
+  </main>
+<script src="script/node_modules/web-streams-polyfill/dist/ponyfill.js"></script>
+<script src="script/node_modules/@transcend-io/conflux/dist/conflux.umd.min.js"></script>
+<script src="script/node_modules/read-excel-file/bundle/read-excel-file.min.js"></script>
+<script src="script/main.js" type="module"></script>
+</body>
+</html>
