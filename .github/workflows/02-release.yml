@@ -1,0 +1,18 @@
+name: 02 - Release version
+
+on:
+  release:
+
+jobs:
+  release:
+    name: Release version
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Make release zip
+        id: release
+        run:
+          vrs=$(cat package.json | grep -e '"version"' | cut -d '"' -f4)
+          make bestek-$vrs.zip
+          echo "version=$vrs" >> "$GITHUB_OUTPUT"
+          echo "file=bestek-$vrs.zip" >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
