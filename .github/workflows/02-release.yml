@@ -2,6 +2,8 @@ name: 02 - Release version
 
 on:
   release:
+    types:
+      - published
 
 jobs:
   release:
