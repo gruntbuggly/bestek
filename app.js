@@ -114,7 +114,13 @@ function showOutputs (documents) {
       return $li
     })
 
-    $outputs.replaceChildren(...$lis)
+    const $zip = document.createElement('li')
+    $zip.classList.add('zip')
+    const $t = document.createTextNode('bestek.zip')
+    $zip.dataset.file = 'bestek.zip'
+    $zip.appendChild($t)
+
+    $outputs.replaceChildren($zip, ...$lis)
   }
 }
 
