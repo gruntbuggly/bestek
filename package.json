@@ -1,8 +1,9 @@
 {
   "version": "1.1.0",
   "dependencies": {
-    "web-streams-polyfill": "^4.0.0",
     "@transcend-io/conflux": "^4.1.0",
-    "read-excel-file": "^5.7.1"
+    "read-excel-file": "^5.7.1",
+    "tailwindcss": "^3.4.3",
+    "web-streams-polyfill": "^4.0.0"
   }
 }

@@ -1,36 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="tailwind.config.js"></script>
+  <style type="text/tailwindcss">
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    code {
+      font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+    }
+
+    @layer components {
+      .app-column {
+        @apply px-0 py-2 md:px-2 md:py-0 md:min-h-full;
+      }
+    }
+  </style>
 <title>Bestek Filter</title>
-<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main>
-    <div class="column" id="col-input">
-      <h3 class="drop-text">Input</h3>
-      <div id="drop-area">
-        <p class="hint">Add word/excel files here</p>
-        <input type="file" id="fileElem" multiple style="display:none">
-      </div>
-      <ul id="documents" class="empty"></ul>
-      <ul id="sheets"    class="empty"></ul>
-      <ul id="unknowns"  class="empty"></ul>
+  <main class="flex flex-col md:min-h-screen md:flex-row flex-nowrap divide-y-2 md:divide-x md:divide-y-0 divide-solid py-4 px-2 md:px-0">
+    <div class="md:basis-2/7 order-1 app-column" id="col-input">
+      <h3 class="text-lg font-bold pb-2">Input</h3>
+      <button class="hover:bg-neutral-100 rounded-lg border-neutral-300 border-dashed border-2 cursor-pointer p-6 w-full" id="drop-area">
+        Add word and excel files here
+      </button>
+      <input type="file" id="fileElem" multiple class="hidden">
+      <ul id="documents"></ul>
+      <ul id="sheets"></ul>
+      <ul id="unknowns"></ul>
     </div>
-    <div class="column" id="col-sections">
-      <h3>Sections</h3>
+    <div class="md:basis-2/7 order-2 md:order-3 app-column" id="col-output">
+      <h3 class="text-lg font-bold pb-2">Output</h3>
+      <ul id="outputs"></ul>
+      <p class="hint">Add at least 1 word file, and 1 excel file or select sections</p>
+    </div>
+    <div class="md:basis-3/7 order-3 md:order-2 app-column" id="col-sections">
+      <h3 class="text-lg font-bold pb-2">Sections</h3>
       <ul id="sections"></ul>
     </div>
-    <div class="column" id="col-output">
-      <h3>Output</h3>
-      <ul id="outputs" class="empty"></ul>
-      <p class="hint">Add at least 1 word, and 1 excel file or select sections</p>
-    </div>
-  </main>
-<script src="https://cdn.jsdelivr.net/npm/web-streams-polyfill@4.0.0/dist/ponyfill.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@transcend-io/conflux@4.1.0/dist/conflux.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/read-excel-file@5.7.1/bundle/read-excel-file.min.js"></script>
-<script src="app.js" type="module"></script>
+    </main>
+  <script src="https://cdn.jsdelivr.net/npm/web-streams-polyfill@4.0.0/dist/ponyfill.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@transcend-io/conflux@4.1.0/dist/conflux.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/read-excel-file@5.7.1/bundle/read-excel-file.min.js"></script>
+  <script src="app.js" type="module"></script>
 </body>
 </html>

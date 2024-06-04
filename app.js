@@ -4,20 +4,22 @@ import bestek from './lib/bestek.js'
 const App = {}
 App.bestek = new bestek ()
 
-document.getElementById('drop-area').addEventListener('dragover', (event) => {
+const $dropArea = document.getElementById('drop-area')
+
+$dropArea.addEventListener('dragover', (event) => {
   event.stopPropagation()
   event.preventDefault()
   event.dataTransfer.dropEffect = 'copy'
 })
 
-document.getElementById('drop-area').addEventListener('drop', (event) => {
+$dropArea.addEventListener('drop', (event) => {
   event.stopPropagation()
   event.preventDefault()
   const files = event.dataTransfer.files
   handleFiles(files)
 })
 
-document.getElementById('drop-area').addEventListener('click', () => {
+$dropArea.addEventListener('click', () => {
   document.getElementById('fileElem').click()
 })
 
