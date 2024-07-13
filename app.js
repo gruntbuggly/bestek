@@ -1,8 +1,15 @@
 
 import bestek from './lib/bestek.js'
+import Key from './lib/key.js'
 
 const App = {}
 App.bestek = new bestek ()
+App.index  = new Map ()
+
+App.class = {}
+App.class.marked   = ['bg-neutral-200', 'selected']
+App.class.download = 'download'
+App.class.zip = 'zip'
 
 const $dropArea = document.getElementById('drop-area')
 
@@ -47,46 +54,47 @@ function handleFiles(files) {
   for (let i = 0; i < files.length; ++i) {
     const file = files[i]
     App.bestek.addFile(file)
-
-    App.bestek.sections().then(list => {
-      const $sections = document.querySelector('#sections')
-
-      const $lis = list.map(({path, text}) => {
-        const $li = document.createElement('li')
-        $li.dataset.section = path.join('.')
-        const $t  = document.createTextNode(text)
-        $li.className = `section-${path.length}`
-        $li.appendChild($t)
-
-        return $li
-      })
-
-      $sections.replaceChildren(...$lis)
-    })
-
-    App.bestek.inputs().then(({documents, sheets, unknowns}) => {
-      const $documents = document.querySelector('#documents')
-      const $sheets    = document.querySelector('#sheets')
-      const $unknowns  = document.querySelector('#unknowns')
-
-      showInput($documents, documents)
-      showInput($sheets   , sheets)
-      showInput($unknowns , unknowns)
-
-      
-    })
-
-    App.bestek.outputs().then(showOutputs)
   }
+
+  App.bestek.sections().then(list => {
+    const $sections = document.querySelector('#sections')
+
+    const $lis = list.map(({path, text}) => {
+      const marked = App.bestek.marked(path)
+      const $li = document.createElement('li')
+      const key = path.join('.')
+      $li.dataset.section = key
+      App.index[key] = $li
+      const $t  = document.createTextNode(text)
+      $li.classList.add(`pl-${path.length}`, ...(marked ? App.class.marked : []))
+      $li.appendChild($t)
+
+      return $li
+    })
+
+    $sections.replaceChildren(...$lis)
+  })
+
+  App.bestek.inputs().then(({documents, sheets, unknowns}) => {
+    const $documents = document.querySelector('#documents')
+    const $sheets    = document.querySelector('#sheets')
+    const $unknowns  = document.querySelector('#unknowns')
+
+    showInput($documents, documents)
+    showInput($sheets   , sheets)
+    showInput($unknowns , unknowns)
+
+    
+  })
+
+  App.bestek.outputs().then(showOutputs)
 }
 
 function showInput ($el, list) {
   if (list.length === 0) {
-    $el.classList.add('empty')
     $el.replaceChildren()
   }
   else {
-    $el.classList.remove('empty')
     const $lis = list.map(input => {
       const $li = document.createElement('li')
       const $t  = document.createTextNode(input.name())
@@ -101,11 +109,9 @@ function showInput ($el, list) {
 function showOutputs (documents) {
   const $outputs = document.getElementById('outputs')
   if (documents.length === 0) {
-    $outputs.classList.add("empty")
     $outputs.replaceChildren()
   }
   else {
-    $outputs.classList.remove("empty")
     const $lis = documents.map(input => {
       const $li = document.createElement('li')
       const original = input.name()
@@ -117,7 +123,7 @@ function showOutputs (documents) {
     })
 
     const $zip = document.createElement('li')
-    $zip.classList.add('zip')
+    $zip.classList.add(App.class.zip)
     const $t = document.createTextNode('bestek.zip')
     $zip.dataset.file = 'bestek.zip'
     $zip.appendChild($t)
@@ -131,8 +137,21 @@ function targetFile (file) {
 }
 
 function toggleSection ($li) {
-  App.bestek.toggle($li.dataset.section)
-  $li.classList.toggle("selected")
+  const path = Key.parse($li.dataset.section)
+  const ar = App.bestek.toggle(path)
+  const {remove,add} = ar
+  remove.forEach(path => {
+    const key = path.join('.')
+    const $li = App.index[key]
+    if ($li)
+      $li.classList.remove(...App.class.marked)
+  })
+  add.forEach(path => {
+    const key = path.join('.')
+    const $li = App.index[key]
+    if ($li)
+      $li.classList.add(...App.class.marked)
+  })
 }
 
 function getOutput (name) {
@@ -141,7 +160,7 @@ function getOutput (name) {
 
     const url = URL.createObjectURL(blob)
     const anchor = document.createElement('a')
-    anchor.classList.add('download')
+    anchor.classList.add(App.class.download)
     anchor.href = url
     anchor.download = targetFile(name)
     document.body.appendChild(anchor)  

@@ -5,5 +5,8 @@
     "read-excel-file": "^5.7.1",
     "tailwindcss": "^3.4.3",
     "web-streams-polyfill": "^4.0.0"
+  },
+  "devDependencies": {
+    "glob": "^10.4.2"
   }
 }
