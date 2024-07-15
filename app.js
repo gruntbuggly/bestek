@@ -9,7 +9,6 @@ App.index  = new Map ()
 App.class = {}
 App.class.marked   = ['bg-neutral-200', 'selected']
 App.class.download = 'download'
-App.class.zip = 'zip'
 
 const $dropArea = document.getElementById('drop-area')
 
@@ -59,13 +58,13 @@ function handleFiles(files) {
   App.bestek.sections().then(list => {
     const $sections = document.querySelector('#sections')
 
-    const $lis = list.map(({path, text}) => {
+    const $lis = list.map(({path, title}) => {
       const marked = App.bestek.marked(path)
       const $li = document.createElement('li')
-      const key = path.join('.')
+      const key = Key.format(path)
       $li.dataset.section = key
       App.index[key] = $li
-      const $t  = document.createTextNode(text)
+      const $t  = document.createTextNode(`${key} ${title}`)
       $li.classList.add(`pl-${path.length}`, ...(marked ? App.class.marked : []))
       if (path.length === 1)
           $li.classList.add('mt-2','font-medium')
@@ -109,13 +108,15 @@ function showInput ($el, list) {
 
 }
 
-function showOutputs (documents) {
-  const $outputs = document.getElementById('outputs')
+function showOutputs ({documents, sheets}) {
+  const $outputZip    = document.getElementById('output-zip')
+  const $outputSheets = document.getElementById('output-sheets')
+  const $outputDocs   = document.getElementById('output-documents')
   if (documents.length === 0) {
-    $outputs.replaceChildren()
+    [$outputZip, $outputSheets, $outputDocs].forEach($output => $output.replaceChildren)
   }
   else {
-    const $lis = documents.map(input => {
+    const $docs = documents.map(input => {
       const $li = document.createElement('li')
       const original = input.name()
       const name = targetFile(original)
@@ -125,13 +126,24 @@ function showOutputs (documents) {
       return $li
     })
 
-    const $zip = document.createElement('li')
-    $zip.classList.add(App.class.zip)
-    const $t = document.createTextNode('bestek.zip')
-    $zip.dataset.file = 'bestek.zip'
-    $zip.appendChild($t)
+    $outputDocs.replaceChildren(...$docs)
 
-    $outputs.replaceChildren($zip, ...$lis)
+    const $zip = document.createElement('li')
+    const name = 'bestek.zip'
+    $zip.dataset.file = name
+    $zip.appendChild(document.createTextNode(name))
+
+    $outputZip.replaceChildren($zip)
+
+    const $shts = sheets.map(sheet => {
+      const $li = document.createElement('li')
+      const name = sheet.name()
+      $li.dataset.file = name
+      $li.appendChild(document.createTextNode(sheet.outputName()))
+      return $li
+    })
+
+    $outputSheets.replaceChildren(...$shts)
   }
 }
 
@@ -144,13 +156,13 @@ function toggleSection ($li) {
   const ar = App.bestek.toggle(path)
   const {remove,add} = ar
   remove.forEach(path => {
-    const key = path.join('.')
+    const key = Key.format(path)
     const $li = App.index[key]
     if ($li)
       $li.classList.remove(...App.class.marked)
   })
   add.forEach(path => {
-    const key = path.join('.')
+    const key = Key.format(path)
     const $li = App.index[key]
     if ($li)
       $li.classList.add(...App.class.marked)
