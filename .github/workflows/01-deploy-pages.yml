@@ -41,3 +41,29 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Setup ssh
+        run: |
+          mkdir -p ~/.ssh
+
+          cat <<KEY >~/.ssh/rhub_rsa
+          ${{secrets.RHUB_SSH}}
+          KEY
+
+          chmod 600 /.ssh/rhub_rsa
+
+          cat <<SSH >>~/.ssh/config
+          Host rhub
+            Hostname ssh.rhub.xyz
+            Port 22
+            User rhubxyz
+            IdentityFile ~/.ssh/rhub_rsa
+          SSH
+
+      - name: test ssh
+        run: |
+          ssh -T rhub ls -al
+
+      - name: Publish at rhub
+        run: |
+          rsync -rvz build/. rhub:subsites/bestekconnector.rhub.xyz/.
