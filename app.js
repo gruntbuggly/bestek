@@ -67,6 +67,8 @@ function handleFiles(files) {
       App.index[key] = $li
       const $t  = document.createTextNode(text)
       $li.classList.add(`pl-${path.length}`, ...(marked ? App.class.marked : []))
+      if (path.length === 1)
+          $li.classList.add('mt-2','font-medium')
       $li.appendChild($t)
 
       return $li
@@ -99,6 +101,7 @@ function showInput ($el, list) {
       const $li = document.createElement('li')
       const $t  = document.createTextNode(input.name())
       $li.appendChild($t)
+      $li.classList.add('pl-2')
       return $li
     })
     $el.replaceChildren(...$lis)
