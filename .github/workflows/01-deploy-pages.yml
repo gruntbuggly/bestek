@@ -50,7 +50,7 @@ jobs:
           ${{secrets.RHUB_SSH}}
           KEY
 
-          chmod 600 /.ssh/rhub_rsa
+          chmod 600 ~/.ssh/rhub_rsa
 
           cat <<SSH >>~/.ssh/config
           Host rhub
