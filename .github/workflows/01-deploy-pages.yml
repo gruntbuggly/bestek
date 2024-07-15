@@ -58,6 +58,7 @@ jobs:
             Port 22
             User rhubxyz
             IdentityFile ~/.ssh/rhub_rsa
+            StrictHostKeyChecking no
           SSH
 
       - name: test ssh
