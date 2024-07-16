@@ -5,6 +5,7 @@ import Key from './lib/key.js'
 const App = {}
 App.bestek = new bestek ()
 App.index  = new Map ()
+App.previous = undefined
 
 App.class = {}
 App.class.marked   = ['bg-neutral-200', 'selected']
@@ -37,7 +38,15 @@ document.getElementById('fileElem').addEventListener('change', (event) => {
 document.getElementById('col-sections').addEventListener('click', event => {
   const $target = event.target
   if ($target.dataset.section) {
-    toggleSection($target)
+    if (event.shiftKey && App.previous) {
+      if (App.previous.offsetTop <= $target.offsetTop)
+        toggleSection.shift(App.previous, $target)
+      else
+        toggleSection.shift($target, App.previous)
+    }
+    else
+      toggleSection($target)
+    App.previous = $target
     App.bestek.outputs().then(showOutputs)
   }
 })
@@ -151,9 +160,9 @@ function targetFile (file) {
   return file.replace(/(\.docx)$/i, ext => '.modified'+ext)
 }
 
-function toggleSection ($li) {
+function toggleSection ($li, mode='toggle') {
   const path = Key.parse($li.dataset.section)
-  const ar = App.bestek.toggle(path)
+  const ar = App.bestek.toggle(path, mode === 'toggle')
   const {remove,add} = ar
   remove.forEach(path => {
     const key = Key.format(path)
@@ -167,6 +176,14 @@ function toggleSection ($li) {
     if ($li)
       $li.classList.add(...App.class.marked)
   })
+}
+
+toggleSection.shift = function ($from, $to) {
+  while ($from !== $to) {
+    toggleSection($from, 'leave-on')
+    $from = $from.nextSibling
+  }
+  toggleSection($to, 'leave-on')
 }
 
 function getOutput (name) {
