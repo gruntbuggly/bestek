@@ -157,11 +157,12 @@ function showOutputs ({documents, sheets}) {
 }
 
 function targetFile (file) {
-  return file.replace(/(\.docx)$/i, ext => '.modified'+ext)
+  return file.replace(/(\.(docx|xlsx))$/i, ext => '.modified'+ext)
 }
 
 function toggleSection ($li, mode='toggle') {
   const path = Key.parse($li.dataset.section)
+  console.log('toggle', path, mode)
   const ar = App.bestek.toggle(path, mode === 'toggle')
   const {remove,add} = ar
   remove.forEach(path => {
@@ -187,8 +188,8 @@ toggleSection.shift = function ($from, $to) {
 }
 
 function getOutput (name) {
+  console.log('output', name)
   App.bestek.output(name).then(blob => {
-    //return
 
     const url = URL.createObjectURL(blob)
     const anchor = document.createElement('a')

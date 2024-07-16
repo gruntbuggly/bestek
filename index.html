@@ -33,21 +33,15 @@
       font-style: italic;
     }
 
-    li.selected:first-of-type {
+    li.selected:first-of-type,
+    li:not(.selected) + li.selected,
+    li.selected.mt-2 {
       border-top-left-radius: 0.2em;
       border-top-right-radius: 0.2em;
     }
 
-    li:not(.selected) + li.selected {
-      border-top-left-radius: 0.2em;
-      border-top-right-radius: 0.2em;
-    }
-
-    li.selected:has(+ li:not(.selected)) {
-      border-bottom-left-radius: 0.2em;
-      border-bottom-right-radius: 0.2em;
-    }
-
+    li.selected:has(+ li:not(.selected)),
+    li.selected:has(+ li.mt-2),
     li.selected:last-of-type {
       border-bottom-left-radius: 0.2em;
       border-bottom-right-radius: 0.2em;
